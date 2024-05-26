@@ -16,7 +16,9 @@ HINT: keep the syntax the same, but edited the correct components with the strin
 The `||` values concatenate the columns into strings. 
 Edit the appropriate columns -- you're making two edits -- and the NULL rows will be fixed. 
 All the other rows will remain the same.) */
-
+SELECT 
+product_name || ', ' || coalesce(product_size, '')|| ' (' || coalesce(product_qty_type , 'unit')|| ')'
+FROM product
 
 
 
@@ -29,16 +31,28 @@ You can either display all rows in the customer_purchases table, with the counte
 each new market date for each customer, or select only the unique market dates per customer 
 (without purchase details) and number those visits. 
 HINT: One of these approaches uses ROW_NUMBER() and one uses DENSE_RANK(). */
-
+SELECT *,
+row_number() OVER (PARTITION by customer_id) as visit_number
+from customer_purchases
 
 /* 2. Reverse the numbering of the query from a part so each customer’s most recent visit is labeled 1, 
 then write another query that uses this one as a subquery (or temp table) and filters the results to 
 only the customer’s most recent visit. */
+SELECT * FROM
+(
+SELECT *,
+row_number() OVER (PARTITION by customer_id ORDER by market_date DESC) as visit_number
+from customer_purchases
+) temp_table
+WHERE visit_number = 1;
 
 
 /* 3. Using a COUNT() window function, include a value along with each row of the 
 customer_purchases table that indicates how many different times that customer has purchased that product_id. */
 
+SELECT *, 
+count(*) OVER (PARTITION by customer_id, product_id) as product_count
+FROM customer_purchases
 
 
 
@@ -53,6 +67,13 @@ Remove any trailing or leading whitespaces. Don't just use a case statement for 
 | Habanero Peppers - Organic | Organic     |
 
 Hint: you might need to use INSTR(product_name,'-') to find the hyphens. INSTR will help split the column. */
+SELECT product_name, 
+CASE
+WHEN instr(product_name, '-') = 0 THEN NULL
+ELSE
+TRIM(substr(product_name, (instr(product_name, '-')+1)))
+END as descriptoin
+FROM product;
 
 
 
@@ -70,6 +91,24 @@ HINT: There are a possibly a few ways to do this query, but if you're struggling
 3) Query the second temp table twice, once for the best day, once for the worst day, 
 with a UNION binding them. */
 
+CREATE TEMPORARY TABLE lowest_sale as 
+SELECT market_date, sum(cost_to_customer_per_qty * quantity) as sale_total
+FROM
+customer_purchases
+GROUP by market_date
+ORDER by sale_total 
+LIMIT 1 ;
 
+CREATE TEMPORARY TABLE hightest_sale as 
+SELECT market_date, sum(cost_to_customer_per_qty * quantity) as sale_total
+FROM
+customer_purchases
+GROUP by market_date
+ORDER by sale_total DESC 
+LIMIT 1 ;
+
+SELECT market_date, sale_total from lowest_sale
+UNION 
+SELECT market_date, sale_total from hightest_sale;
 
 
