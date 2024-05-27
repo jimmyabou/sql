@@ -25,7 +25,10 @@ Review the AdventureWorks Schema [here](https://i.stack.imgur.com/LMu4W.gif)
 
 Highlight at least two differences between it and your ERD. Would you change anything in yours?
 ```
-Your answer...
+
+The AdventureWorks schema has more detail and modularity compared to the simple ERD I provided. AdventureWorks divides information into more specific tables and columns. The second difference is that AdventureWorks uses different schemas for various departments to enhance data organization and management, providing a clearer overview of each table and the role it plays in the organization, whereas mine has only one unified schema without departmental divisions.
+
+To improve my ERD, I would add more details and tables, making them more modular, and include additional columns for extra details. Additionally, I would ensure that historical records are kept when needed and that the database is expandable as the project grows, seamlessly ensuring better data integrity.
 ```
 
 # Criteria
