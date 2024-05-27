@@ -15,7 +15,9 @@ _Hint, search type 1 vs type 2 slowly changing dimensions._
 
 Bonus: Are there privacy implications to this, why or why not?
 ```
-Your answer...
+In the first approach, there are no significant privacy concerns since only the current address is stored.
+
+In the second approach, we are storing older addresses of customers, which can lead to privacy issues, especially if past addresses are not properly secured. When retaining such records, it is crucial to ensure they are kept only for a necessary period and deleted when they are no longer relevant or needed.
 ```
 
 ## Question 4
